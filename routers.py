@@ -114,8 +114,25 @@ async def account_get(token=Depends(security.access_token_required)):
 
 @account_router.post(
         "/logout",
-        summary="Logout from account"
-        # responses=...
+        summary="Logout from account",
+        responses={
+            200: {
+                "description": "Log out from account",
+                "content": {
+                    "application/json": {
+                        "example": {"msg": "Successfully logout", "success": True}
+                    }
+                }
+            },
+            401: {
+                "description": "Access denied",
+                "content": {
+                    "application/json": {
+                        "example": {"detail": {"msg": "Access denied: Authorization required or expired. Please Log In", "success": False}}
+                    }
+                }
+            }
+        }
 )
 async def account_post(token=Depends(security.access_token_required)):
     response = JSONResponse(content={"msg": "Successfully logout", "success": True}, status_code=status.HTTP_200_OK)
