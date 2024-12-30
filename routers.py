@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from p_models import PUser, PTask, PTaskEdit
 from database import is_exists, add_user, login_validation, get_tasks, add_task, delete_task, edit_task
 from auth import security
+from auth import config as configX
 
 
 auth_router = APIRouter(
@@ -111,6 +112,15 @@ account_router = APIRouter(
 async def account_get(token=Depends(security.access_token_required)):
     return JSONResponse(content={"msg": "Your account page", "uid": token.sub, "success": True}, status_code=status.HTTP_200_OK)
 
+@account_router.post(
+        "/logout",
+        summary="Logout from account"
+        # responses=...
+)
+async def account_post(token=Depends(security.access_token_required)):
+    response = JSONResponse(content={"msg": "Successfully logout", "success": True}, status_code=status.HTTP_200_OK)
+    response.delete_cookie(key=configX.JWT_ACCESS_COOKIE_NAME)
+    return response
 
 @account_router.get(
         "/tasks",
